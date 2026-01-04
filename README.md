@@ -7,9 +7,9 @@ SoundGen is a desktop application for generating, playing, and editing musical m
 
 ✨ Key Features
 
- 🎹 Visual Piano Keyboard - Interactive keyboard with 4 octaves (C3 to B6) for note input
+- 🎹 Visual Piano Keyboard - Interactive keyboard with 4 octaves (C3 to B6) for note input
 
- 📝 Text-Based Melody Input - Supports note notation like C/300 C#/200 D/400 (note/duration in ms)
+- 📝 Text-Based Melody Input - Supports note notation like C/300 C#/200 D/400 (note/duration in ms)
 
  🔊 Real-Time Audio Generation - Generates WAV audio on-the-fly using sine waves with ADSR envelopes
 
