@@ -8,7 +8,7 @@
 
 
 🎬 Video Demos
-- YouTube: https://youtu.be/wVhCOaF500o
+- YouTube: https://youtu.be/-t_SHP8ifG4
 - RuTube: https://rutube.ru/video/420f66df7bd9aab38915fe84f3ece3c3/
 
 ✨ Key Features
