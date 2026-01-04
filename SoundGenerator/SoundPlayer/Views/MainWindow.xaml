@@ -1,0 +1,261 @@
+﻿<Window x:Class="SoundGen.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:SoundGen.Converters"
+        xmlns:vm="clr-namespace:SoundGen.ViewModels"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Note Generator" Height="791" Width="1250"
+        Closing="Window_Closing">
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <Style x:Key="MelodyListItemStyle" TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#EEEEEE"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F5F5F5"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#E3F2FD"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Левая часть - основное содержимое -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Menu -->
+            <Menu Grid.Row="0">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Save As..." Command="{Binding SaveAsCommand}"/>
+                    <MenuItem Header="_Open..." Command="{Binding OpenCommand}"/>
+                    <Separator/>
+                    <MenuItem Header="Refresh Melodies" Command="{Binding RefreshMelodiesCommand}"/>
+                </MenuItem>
+            </Menu>
+
+            <!-- Main Content -->
+            <Grid Grid.Row="1" Margin="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Enter melody: notes (C, C#, Db, D...) with optional duration in ms"
+                           Margin="0,0,0,5"
+                           TextWrapping="Wrap"/>
+
+                <TextBox Grid.Row="1"
+                         x:Name="NoteInputBox"
+                         Height="100"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         FontFamily="Consolas"
+                         VerticalScrollBarVisibility="Auto"
+                         Text="{Binding NoteInputText, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Clear" Command="{Binding ClearTextCommand}"/>
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+
+                <!-- Tempo -->
+                <TextBlock Grid.Row="2" Text="Default note duration (ms):" Margin="0,10,0,2"/>
+                <Slider Grid.Row="3"
+                        x:Name="TempoSlider"
+                        Minimum="50"
+                        Maximum="2000"
+                        Value="{Binding DefaultDuration}"
+                        TickFrequency="50"
+                        IsSnapToTickEnabled="True"
+                        AutoToolTipPlacement="TopLeft">
+                    <Slider.ToolTip>
+                        <TextBlock Text="{Binding Value, ElementName=TempoSlider, StringFormat='{}{0} ms'}"/>
+                    </Slider.ToolTip>
+                </Slider>
+
+                <!-- Volume -->
+                <TextBlock Grid.Row="4" Text="Volume (%):" Margin="0,10,0,2"/>
+                <Slider Grid.Row="5"
+                        x:Name="VolumeSlider"
+                        Minimum="0"
+                        Maximum="100"
+                        Value="{Binding Volume}"
+                        AutoToolTipPlacement="TopLeft">
+                    <Slider.ToolTip>
+                        <TextBlock Text="{Binding Value, ElementName=VolumeSlider, StringFormat='{}{0:F0}%'}"/>
+                    </Slider.ToolTip>
+                </Slider>
+
+                <!-- Play / Stop Buttons -->
+                <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15">
+                    <Button x:Name="PlayButton"
+                            Content="Play"
+                            Width="80"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Command="{Binding PlayCommand}"/>
+                    <Button x:Name="StopButton"
+                            Content="Stop"
+                            Width="80"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            Command="{Binding StopCommand}"/>
+                    <Button x:Name="GenerateButton"
+                            Content="Generate"
+                            Width="80"
+                            Height="40"
+                            Command="{Binding GenerateCommand}" Background="#FFB1F12C"/>
+                </StackPanel>
+
+                <!-- Piano -->
+                <ScrollViewer Grid.Row="7" 
+                              HorizontalScrollBarVisibility="Auto" 
+                              VerticalScrollBarVisibility="Disabled" 
+                              Margin="0,10,0,0" 
+                              MaxHeight="150">
+                    <Canvas x:Name="PianoCanvas" Height="200" Background="White"/>
+                </ScrollViewer>
+
+                <TextBlock Grid.Row="8"
+                           Text="Format: Note/ms (e.g. C#/300). Without /, default duration is used. Rest: _ or 0. Supported: C, C#, Db, D... (with octaves like C4, F#5, etc.)"
+                           FontStyle="Italic"
+                           Foreground="Gray"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,5,0,0"/>
+                <StackPanel Grid.Row="9">
+                    <TextBlock 
+                           Text="Console:"
+                           Foreground="Black"
+                           FontSize="11"
+                           TextWrapping="Wrap"
+                           Margin="0,15,0,5"/>
+                    <TextBox
+                         x:Name="ConsoleBox"
+                         IsReadOnly="True"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         FontFamily="Consolas"
+                         VerticalScrollBarVisibility="Auto"
+                         Height="200"
+                         Text="{Binding ConsoleText, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Clear" Command="{Binding ClearConsoleCommand}"/>
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- Правая часть - список мелодий -->
+        <Grid Grid.Column="1" Background="#FAFAFA">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Заголовок списка -->
+            <Border Grid.Row="0" Background="#2196F3" Padding="15,10">
+                <StackPanel>
+                    <TextBlock Text="Saved Melodies" 
+                               Foreground="White" 
+                               FontSize="16" 
+                               FontWeight="Bold"/>
+                    <TextBlock Text="(from app directory)" 
+                               Foreground="White" 
+                               FontSize="11" 
+                               Opacity="0.9"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Список мелодий -->
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding Melodies}"
+                     SelectedItem="{Binding SelectedMelody}"
+                     ItemContainerStyle="{StaticResource MelodyListItemStyle}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Margin="1">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="4">
+                            <TextBlock Text="{Binding Name}" 
+                                       FontWeight="Bold" 
+                                       FontSize="14"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{Binding ModifiedDate, StringFormat='Modified: {0:g}'}" 
+                                       Foreground="Gray" 
+                                       FontSize="11"
+                                       Margin="0,2,0,0"/>
+                            <TextBlock Text="{Binding Content}" 
+                                       Foreground="#666666" 
+                                       FontSize="11"
+                                       TextTrimming="CharacterEllipsis"
+                                       MaxHeight="30"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Template>
+                    <ControlTemplate>
+                        <Border Background="{TemplateBinding Background}">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsPresenter/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </ListBox.Template>
+            </ListBox>
+
+            <!-- Сообщение, если нет мелодий -->
+            <TextBlock Grid.Row="1"
+                       Text="No melodies found in app directory"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Foreground="Gray"
+                       FontStyle="Italic"
+                       Visibility="{Binding Melodies.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+        </Grid>
+
+        <!-- Разделитель -->
+        <GridSplitter Grid.Column="0"
+                      Grid.ColumnSpan="2"
+                      Width="3"
+                      HorizontalAlignment="Right"
+                      Background="#E0E0E0"
+                      ShowsPreview="True"/>
+    </Grid>
+</Window>
