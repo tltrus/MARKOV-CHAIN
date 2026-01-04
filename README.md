@@ -6,8 +6,9 @@
 
 <img width="874" height="558" alt="image" src="https://github.com/user-attachments/assets/6024c966-34d8-42ef-b32f-b25aef2bc8b6" />
 
+
 🎬 Video Demos
-- YouTube:
+- YouTube: https://youtu.be/wVhCOaF500o
 - RuTube:
 
 ✨ Key Features
