@@ -9,7 +9,7 @@
 
 🎬 Video Demos
 - YouTube: https://youtu.be/wVhCOaF500o
-- RuTube:
+- RuTube: https://rutube.ru/video/420f66df7bd9aab38915fe84f3ece3c3/
 
 ✨ Key Features
 - 🎹 Visual Piano Keyboard - Interactive keyboard with 4 octaves (C3 to B6) for note input
