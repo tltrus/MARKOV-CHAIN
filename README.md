@@ -4,6 +4,8 @@
 
 🎵 Musical Note Generator & Player is a desktop application for generating, playing, and editing musical melodies using text-based note notation. Built with C# WPF, it combines a simple piano keyboard interface with Markov chain-based melody generation.
 
+<img width="874" height="558" alt="image" src="https://github.com/user-attachments/assets/6024c966-34d8-42ef-b32f-b25aef2bc8b6" />
+
 🎬 Video Demos
 - YouTube:
 - RuTube:
@@ -29,9 +31,4 @@
 - UI Framework: WPF (XAML)
 - Audio: System.Media.SoundPlayer with custom WAV generation
 - Algorithm: Markov chain (bigram model) for melody generation
-- Architecture: MVVM pattern with ViewModel binding
-
-
-
-<img width="874" height="558" alt="image" src="https://github.com/user-attachments/assets/6024c966-34d8-42ef-b32f-b25aef2bc8b6" />
-
+- Architecture: MVVM pattern with ViewModel binding.
